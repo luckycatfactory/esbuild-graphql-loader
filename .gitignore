@@ -1,4 +1,5 @@
 node_modules
 *.log
 tmp
-tests/fixtures/*/actual.js
+tests/fixtures/*/output.js
+**/.DS_Store

@@ -1,0 +1,5 @@
+{
+  "transform": {
+    "\\.(t|j)sx?$": "./tests/jest-esbuild-typescript.js"
+  }
+}
