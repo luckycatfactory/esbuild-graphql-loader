@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "esModuleInterop": true,
+    "noEmit": false,
+    "outDir": "lib",
+    "sourceMap": true,
+    "strict": true,
+    "types": ["node"]
+  },
+  "files": ["src/index.ts"]
+}

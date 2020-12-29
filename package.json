@@ -1,0 +1,50 @@
+{
+  "author": "Louis Cruz <louisstephancruz@me.com>",
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "description": "An esbuild plugin that allows for the importing of GraphQL files",
+  "devDependencies": {
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
+    "@types/node": "^14.14.16",
+    "commitizen": "^4.2.2",
+    "cz-conventional-changelog": "3.3.0",
+    "graphql": "^15.4.0",
+    "graphql-tag": "^2.11.0",
+    "semantic-release": "^17.3.0",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3"
+  },
+  "files": [
+    "lib/**/*"
+  ],
+  "license": "MIT",
+  "main": "./lib/index.js",
+  "module": "./lib/index.mjs",
+  "name": "@luckycatfactory/esbuild-graphql-loader",
+  "peerDependencies": {
+    "esbuild": "^0.8.26"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/luckycatfactory/esbuild-graphql-loader.git"
+  },
+  "scripts": {
+    "build": "tsc && ts-node ./scripts/build.ts",
+    "commit": "cz",
+    "commitlint": "commitlint --edit",
+    "release": "semantic-release",
+    "test": "ts-node tests/index.ts"
+  },
+  "types": "./lib/index.d.ts",
+  "version": "1.0.0-alpha.1",
+  "dependencies": {
+    "esbuild": "^0.8.26"
+  }
+}
