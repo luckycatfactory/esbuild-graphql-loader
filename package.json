@@ -43,7 +43,6 @@
     "test": "ts-node tests/index.ts"
   },
   "types": "./lib/index.d.ts",
-  "version": "1.0.0-alpha.1",
   "dependencies": {
     "esbuild": "^0.8.26"
   }
