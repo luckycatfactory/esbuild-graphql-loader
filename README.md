@@ -1,5 +1,7 @@
 # `esbuild-graphql-loader`
 
+[![npm version](https://badge.fury.io/js/%40luckycatfactory%2Fesbuild-graphql-loader.svg)](https://badge.fury.io/js/%40luckycatfactory%2Fesbuild-graphql-loader)
+
 This is an [esbuild](https://github.com/evanw/esbuild) plugin that allows for the importing of GraphQL files.
 
 ## Usage
@@ -7,11 +9,11 @@ This is an [esbuild](https://github.com/evanw/esbuild) plugin that allows for th
 To install this package:
 
 ```sh
-npm install --save @luckycatfactory/esbuild-graphql-loader
+npm install --save @luckycatfactory/esbuild-graphql-loader esbuild graphql-tag
 ```
 
 ```sh
-yarn add @luckycatfactory/esbuild-graphql-loader
+yarn add @luckycatfactory/esbuild-graphql-loader esbuild graphql-tag
 ```
 
 Then, use the plugin like so:
