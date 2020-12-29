@@ -1,5 +1,5 @@
 node_modules
 *.log
 tmp
-tests/fixtures/*/output.js
+tests/cases/*/output.js
 **/.DS_Store
