@@ -16,6 +16,8 @@ jobs:
         run: yarn --offline --frozen-lockfile
       - name: Build esbuild-graphql-loader
         run: yarn build
+      - name: Validate no changes
+        run: git diff --exit-code
     timeout-minutes: 2
   commitlint:
     runs-on: ubuntu-latest
