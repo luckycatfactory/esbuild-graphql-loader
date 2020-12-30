@@ -6,7 +6,7 @@ import {
 } from '../utilities';
 import output from './output';
 
-describe('simple graphql import case', () => {
+describe('simple import case with a space', () => {
   it('generates the expected output', () => {
     const targetFile = path.join(__dirname, './target.graphql');
     const userFile = path.join(__dirname, './user.graphql');
