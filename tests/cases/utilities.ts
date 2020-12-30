@@ -32,5 +32,13 @@ export const getJSONDocumentNodeFromString = (
   return documentNode;
 };
 
-export const importFileAsString = (absolutePath: string): Promise<string> =>
-  fs.promises.readFile(absolutePath).then((data) => data.toString());
+export const importFileAsString = (
+  absolutePath: string,
+  withoutFirstNLines: number = 0
+): Promise<string> =>
+  fs.promises.readFile(absolutePath).then((data) => {
+    const fullString = data.toString();
+    const lines = fullString.split("\n");
+
+    return lines.slice(withoutFirstNLines, lines.length).join("\n") + "\n";
+  });

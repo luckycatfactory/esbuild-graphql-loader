@@ -1,0 +1,10 @@
+#import ../user.graphql
+#import ./deeper-nest/post.graphql
+
+type Query {
+  posts: [Post!]!
+}
+
+schema {
+  query: Query
+}

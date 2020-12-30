@@ -1,0 +1,6 @@
+#import ./user.graphql
+
+type Post {
+  id: ID!
+  author: User!
+}

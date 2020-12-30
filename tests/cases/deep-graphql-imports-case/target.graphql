@@ -1,0 +1,9 @@
+#import ./post.graphql
+
+type Query {
+  posts: [Post!]!
+}
+
+schema {
+  query: Query
+}

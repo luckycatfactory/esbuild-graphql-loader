@@ -1,0 +1,4 @@
+type Timestamps {
+  createdAt: Number!
+  updatedAt: Number!
+}
