@@ -1,7 +1,7 @@
-import { build, BuildOptions } from "esbuild";
-import graphqlLoaderPlugin from "../src";
-import fs from "fs";
-import path from "path";
+import { build, BuildOptions } from 'esbuild';
+import graphqlLoaderPlugin from '../src';
+import fs from 'fs';
+import path from 'path';
 
 // I originally attempted to write traditional Jest tests, utilizing the build
 // API with write: false, but I encountered some go-level interface coercion
@@ -13,10 +13,6 @@ import path from "path";
 // we can then run the Jest tests that are dependent on the generated files
 // being present.
 
-process.on("unhandledRejection", (reason, p) => {
-  throw reason;
-});
-
 interface TestCase {
   buildOptions: BuildOptions;
   entryPath: string;
@@ -25,7 +21,7 @@ interface TestCase {
   outfilePath: string;
 }
 
-const casesPath = path.join(__dirname, "./cases");
+const casesPath = path.join(__dirname, './cases');
 
 const defaultBuildOptions = {
   bundle: true,
@@ -64,20 +60,20 @@ const getTestFolders = (): Promise<string[]> =>
 
 const generateTestCase = (file: string): TestCase => {
   const casePath = path.join(casesPath, file);
-  const buildOptionsPath = path.join(casePath, "buildOptions.ts");
+  const buildOptionsPath = path.join(casePath, 'buildOptions.ts');
 
   const buildOptionsOverrides: Partial<BuildOptions> = fs.existsSync(
     buildOptionsPath
   )
-    ? require(buildOptionsPath).default
+    ? require(buildOptionsPath).default // eslint-disable-line @typescript-eslint/no-var-requires
     : {};
 
   return {
     buildOptions: { ...defaultBuildOptions, ...buildOptionsOverrides },
-    entryPath: path.join(casePath, "index.ts"),
-    expectedPath: path.join(casePath, "expected.js"),
-    graphqlPath: path.join(casePath, "target.graphql"),
-    outfilePath: path.join(casePath, "output.js"),
+    entryPath: path.join(casePath, 'index.ts'),
+    expectedPath: path.join(casePath, 'expected.js'),
+    graphqlPath: path.join(casePath, 'target.graphql'),
+    outfilePath: path.join(casePath, 'output.js'),
   };
 };
 
@@ -89,7 +85,7 @@ const generateActualContent = (testCases: TestCase[]) =>
     testCases.map((testCase) =>
       build({
         entryPoints: [testCase.entryPath],
-        format: "esm",
+        format: 'esm',
         plugins: [graphqlLoaderPlugin()],
         outfile: testCase.outfilePath,
         ...testCase.buildOptions,

@@ -1,17 +1,17 @@
-import { build, Format } from "esbuild";
+import { build, Format } from 'esbuild';
 
-const formats: Format[] = ["cjs", "esm"];
+const formats: Format[] = ['cjs', 'esm'];
 
 Promise.all(
   formats.map((format) =>
     build({
       bundle: true,
-      entryPoints: ["src/index.ts"],
-      external: ["graphql-tag"],
+      entryPoints: ['src/index.ts'],
+      external: ['graphql-tag'],
       format,
-      outfile: format === "cjs" ? "lib/index.js" : "lib/index.mjs",
-      platform: "node",
-      target: ["node8.0.0"],
+      outfile: format === 'cjs' ? 'lib/index.js' : 'lib/index.mjs',
+      platform: 'node',
+      target: ['node8.0.0'],
     })
   )
 ).catch(() => {

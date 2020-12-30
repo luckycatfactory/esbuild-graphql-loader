@@ -1,9 +1,9 @@
-import { Plugin } from "esbuild";
-import fs from "fs";
-import gql from "graphql-tag";
-import { DocumentNode } from "graphql";
-import readline from "readline";
-import path from "path";
+import { Plugin } from 'esbuild';
+import fs from 'fs';
+import gql from 'graphql-tag';
+import { DocumentNode } from 'graphql';
+import readline from 'readline';
+import path from 'path';
 
 interface GraphQLLoaderPluginOptions {
   filterRegex: RegExp;
@@ -30,8 +30,8 @@ const defaultOptions: GraphQLLoaderPluginOptions = {
 //
 const documentNodeToString = (documentNode: DocumentNode): string =>
   JSON.stringify(documentNode, (key, value) =>
-    value === undefined ? "__undefined" : value
-  ).replace(/\"__undefined"/g, "undefined");
+    value === undefined ? '__undefined' : value
+  ).replace(/"__undefined"/g, 'undefined');
 
 const topologicallySortParsedFiles = (
   parsedFiles: ParsedGraphQLFile[],
@@ -64,28 +64,28 @@ const parseGraphQLFile = (filePath: string): Promise<ParsedGraphQLFile> =>
     const readInterface = readline.createInterface({
       input: fs.createReadStream(filePath),
     });
-    let body = "";
+    let body = '';
     const imports: Import[] = [];
 
     let hasExhaustedImports = false;
 
-    readInterface.on("line", (line) => {
-      if (line.startsWith("#import ")) {
-        const relativePath = line.replace("#import ", "");
+    readInterface.on('line', (line) => {
+      if (line.startsWith('#import ')) {
+        const relativePath = line.replace('#import ', '');
         const absolutePath = path.join(path.dirname(filePath), relativePath);
         imports.push({
           absolutePath,
           relativePath,
         });
       } else if (hasExhaustedImports) {
-        body += line + "\n";
-      } else if (line[0] !== "#" && line !== "") {
+        body += line + '\n';
+      } else if (line[0] !== '#' && line !== '') {
         hasExhaustedImports = true;
-        body += line + "\n";
+        body += line + '\n';
       }
     });
 
-    readInterface.on("close", () => {
+    readInterface.on('close', () => {
       resolve({ body: body.trim(), filePath, imports });
     });
   });
@@ -125,8 +125,8 @@ const generateDocumentNodeString = (
     const files = topologicallySortParsedFiles(Object.values(cache), cache);
 
     const documentNodeString = files.reduce((accumulator, file) => {
-      return file.body + "\n\n" + accumulator;
-    }, "");
+      return file.body + '\n\n' + accumulator;
+    }, '');
 
     return documentNodeString;
   });
@@ -141,7 +141,7 @@ const graphqlLoaderPlugin = (
   };
 
   return {
-    name: "graphql-loader",
+    name: 'graphql-loader',
     setup(build) {
       build.onLoad({ filter: optionsWithDefaults.filterRegex }, (args) =>
         generateDocumentNodeString(args.path).then((documentNodeString) => ({

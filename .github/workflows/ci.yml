@@ -11,7 +11,7 @@ jobs:
       - name: Use Node.js (.nvmrc)
         uses: actions/setup-node@v1
         with:
-          node-version: "${{ steps.nvm.outputs.NVMRC }}"
+          node-version: '${{ steps.nvm.outputs.NVMRC }}'
       - name: Install dependencies
         run: yarn --offline --frozen-lockfile
       - name: Build esbuild-graphql-loader
@@ -25,9 +25,27 @@ jobs:
           fetch-depth: 0
       - uses: wagoid/commitlint-github-action@v2
     timeout-minutes: 2
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - id: nvm
+        name: Read .nvmrc
+        run: echo "##[set-output name=NVMRC;]$(cat .nvmrc)"
+      - name: Use Node.js (.nvmrc)
+        uses: actions/setup-node@v1
+        with:
+          node-version: '${{ steps.nvm.outputs.NVMRC }}'
+      - name: Install dependencies
+        run: yarn --offline --frozen-lockfile
+      - name: Lint esbuild-graphql-loader
+        run: yarn lint
+    timeout-minutes: 2
   release:
     if: github.ref == 'refs/heads/master'
-    needs: ["build", "commitlint", "test"]
+    needs: ['build', 'commitlint', 'eslint', 'test']
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -37,7 +55,7 @@ jobs:
       - name: Use Node.js (.nvmrc)
         uses: actions/setup-node@v1
         with:
-          node-version: "${{ steps.nvm.outputs.NVMRC }}"
+          node-version: '${{ steps.nvm.outputs.NVMRC }}'
       - name: Install dependencies
         run: yarn --offline --frozen-lockfile
       - env:
@@ -57,7 +75,7 @@ jobs:
       - name: Use Node.js (.nvmrc)
         uses: actions/setup-node@v1
         with:
-          node-version: "${{ steps.nvm.outputs.NVMRC }}"
+          node-version: '${{ steps.nvm.outputs.NVMRC }}'
       - name: Install dependencies
         run: yarn --offline --frozen-lockfile
       - name: Test esbuild-graphql-loader

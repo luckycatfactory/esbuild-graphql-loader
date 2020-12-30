@@ -1,3 +1,3 @@
-import query from "./target.gql";
+import query from './target.gql';
 
 export default query;

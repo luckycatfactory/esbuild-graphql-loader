@@ -1,13 +1,13 @@
-import fs from "fs";
-import gql from "graphql-tag";
-import { DocumentNode } from "graphql";
+import fs from 'fs';
+import gql from 'graphql-tag';
+import { DocumentNode } from 'graphql';
 
 interface JSONLocation {
   end: number;
   start: number;
 }
 
-interface JSONDocumentNode extends Omit<DocumentNode, "loc"> {
+interface JSONDocumentNode extends Omit<DocumentNode, 'loc'> {
   loc?: JSONLocation;
 }
 
@@ -34,11 +34,11 @@ export const getJSONDocumentNodeFromString = (
 
 export const importFileAsString = (
   absolutePath: string,
-  withoutFirstNLines: number = 0
+  withoutFirstNLines = 0
 ): Promise<string> =>
   fs.promises.readFile(absolutePath).then((data) => {
     const fullString = data.toString();
-    const lines = fullString.split("\n");
+    const lines = fullString.split('\n');
 
-    return lines.slice(withoutFirstNLines, lines.length).join("\n") + "\n";
+    return lines.slice(withoutFirstNLines, lines.length).join('\n') + '\n';
   });

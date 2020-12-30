@@ -1,14 +1,14 @@
-import path from "path";
+import path from 'path';
 
 import {
   getJSONDocumentNodeFromString,
   importFileAsString,
-} from "../utilities";
-import output from "./output";
+} from '../utilities';
+import output from './output';
 
-describe("operations", () => {
-  it("generates the expected output", () => {
-    const targetFile = path.join(__dirname, "./target.graphql");
+describe('operations', () => {
+  it('generates the expected output', () => {
+    const targetFile = path.join(__dirname, './target.graphql');
     return importFileAsString(targetFile).then((data) => {
       const expected = getJSONDocumentNodeFromString(data);
 
