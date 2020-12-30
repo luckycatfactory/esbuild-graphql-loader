@@ -6,7 +6,8 @@ import readline from 'readline';
 import path from 'path';
 
 interface GraphQLLoaderPluginOptions {
-  filterRegex: RegExp;
+  filterRegex?: RegExp;
+  mapDocumentNode?: (documentNode: DocumentNode) => DocumentNode;
 }
 
 interface Import {
@@ -20,18 +21,21 @@ interface ParsedGraphQLFile {
   imports: Import[];
 }
 
-const defaultOptions: GraphQLLoaderPluginOptions = {
-  filterRegex: /\.graphql$/,
-};
-
 // Definitions can be undefined, which will get stripped when JSON.stringify is
 // run. For that reason, we temporarily serialize undefined, then swap it back
 // to the value of undefined.
 //
-const documentNodeToString = (documentNode: DocumentNode): string =>
-  JSON.stringify(documentNode, (key, value) =>
+const generateDocumentNodeString = (
+  graphqlString: string,
+  mapDocumentNode?: (documentNode: DocumentNode) => DocumentNode
+): string => {
+  const ast = gql(graphqlString);
+  const documentNodeToUse = mapDocumentNode ? mapDocumentNode(ast) : ast;
+
+  return JSON.stringify(documentNodeToUse, (key, value) =>
     value === undefined ? '__undefined' : value
   ).replace(/"__undefined"/g, 'undefined');
+};
 
 const topologicallySortParsedFiles = (
   parsedFiles: ParsedGraphQLFile[],
@@ -90,9 +94,7 @@ const parseGraphQLFile = (filePath: string): Promise<ParsedGraphQLFile> =>
     });
   });
 
-const generateDocumentNodeString = (
-  entryPointPath: string
-): Promise<string> => {
+const generateGraphQLString = (entryPointPath: string): Promise<string> => {
   const cache: Record<string, ParsedGraphQLFile> = {};
   const parsePromises: Promise<null>[] = [];
   const seenImportPaths = new Set();
@@ -124,34 +126,28 @@ const generateDocumentNodeString = (
   return visitAndParse(entryPointPath).then(() => {
     const files = topologicallySortParsedFiles(Object.values(cache), cache);
 
-    const documentNodeString = files.reduce((accumulator, file) => {
+    const graphqlString = files.reduce((accumulator, file) => {
       return file.body + '\n\n' + accumulator;
     }, '');
 
-    return documentNodeString;
+    return graphqlString;
   });
 };
 
 const graphqlLoaderPlugin = (
-  options: Partial<GraphQLLoaderPluginOptions> = {}
-): Plugin => {
-  const optionsWithDefaults: GraphQLLoaderPluginOptions = {
-    ...defaultOptions,
-    ...options,
-  };
-
-  return {
-    name: 'graphql-loader',
-    setup(build) {
-      build.onLoad({ filter: optionsWithDefaults.filterRegex }, (args) =>
-        generateDocumentNodeString(args.path).then((documentNodeString) => ({
-          contents: `export default ${documentNodeToString(
-            gql(documentNodeString)
-          )};`,
-        }))
-      );
-    },
-  };
-};
+  options: GraphQLLoaderPluginOptions = {}
+): Plugin => ({
+  name: 'graphql-loader',
+  setup(build) {
+    build.onLoad({ filter: options.filterRegex || /\.graphql$/ }, (args) =>
+      generateGraphQLString(args.path).then((graphqlString) => ({
+        contents: `export default ${generateDocumentNodeString(
+          graphqlString,
+          options.mapDocumentNode
+        )};`,
+      }))
+    );
+  },
+});
 
 export default graphqlLoaderPlugin;

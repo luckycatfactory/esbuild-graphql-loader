@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/%40luckycatfactory%2Fesbuild-graphql-loader.svg)](https://badge.fury.io/js/%40luckycatfactory%2Fesbuild-graphql-loader)
 
-This is an [esbuild](https://github.com/evanw/esbuild) plugin that allows for the importing of GraphQL files.
+This is a zero-dependency [esbuild](https://github.com/evanw/esbuild) plugin that allows for the importing of GraphQL files.
 
 ## Usage
 
@@ -19,8 +19,8 @@ yarn add @luckycatfactory/esbuild-graphql-loader esbuild graphql-tag
 Then, use the plugin like so:
 
 ```ts
-import { build } from "esbuild";
-import graphqlLoaderPlugin from "@luckycatfactory/esbuild-graphql-loader";
+import { build } from 'esbuild';
+import graphqlLoaderPlugin from '@luckycatfactory/esbuild-graphql-loader';
 
 build({
   ...otherOptions,
@@ -43,6 +43,12 @@ type Post {
 }
 ```
 
+### Recommendations
+
+#### Optimize Your DocumentNodes
+
+You can shave a bit off your bundle size by optimizing your `DocumentNode` instances with tools like [@graphql-tools/optimize](https://www.graphql-tools.com/docs/api/modules/optimize) through the [mapDocumentNode configuration option](https://github.com/luckycatfactory/esbuild-graphql-loader#mapdocumentnode).
+
 ## Configuration
 
 Some configuration options are available at plugin instantiation.
@@ -54,12 +60,35 @@ By default, this regex is `/\.graphql$/`.
 Here is how you can override that value:
 
 ```ts
-import { build } from "esbuild";
-import graphqlLoaderPlugin from "@luckycatfactory/esbuild-graphql-loader";
+import { build } from 'esbuild';
+import graphqlLoaderPlugin from '@luckycatfactory/esbuild-graphql-loader';
 
 build({
   ...otherOptions,
   plugins: [graphqlLoaderPlugin({ filterRegex: /\.gql$/ })],
+}).catch(() => {
+  process.exit(1);
+});
+```
+
+### `mapDocumentNode`
+
+This is an optional function that you can supply to map all `DocumentNode` instances before they're resolved.
+An example of this would be:
+
+```ts
+import { build } from 'esbuild';
+import graphqlLoaderPlugin from '@luckycatfactory/esbuild-graphql-loader';
+import { optimizeDocumentNode } from '@graphql-tools/optimize';
+
+build({
+  ...otherOptions,
+  plugins: [
+    graphqlLoaderPlugin({
+      mapDocumentNode: (documentNode: DocumentNode) =>
+        optimizeDocumentNode(documentNode),
+    }),
+  ],
 }).catch(() => {
   process.exit(1);
 });

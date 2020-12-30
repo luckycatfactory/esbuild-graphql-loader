@@ -18,9 +18,10 @@ interface JSONDocumentNode extends Omit<DocumentNode, 'loc'> {
 // serialization before comparing.
 //
 export const getJSONDocumentNodeFromString = (
-  dataString: string
+  data: string | DocumentNode
 ): JSONDocumentNode => {
-  const documentNode: DocumentNode = gql(dataString);
+  const documentNode: DocumentNode =
+    typeof data === 'string' ? gql(data) : data;
 
   if (documentNode.loc) {
     return {
