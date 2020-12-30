@@ -1,4 +1,4 @@
-import { Plugin } from "esbuild";
+import { Plugin } from 'esbuild';
 interface GraphQLLoaderPluginOptions {
     filterRegex: RegExp;
 }
