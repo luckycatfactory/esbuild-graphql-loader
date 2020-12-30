@@ -13,6 +13,10 @@ import path from "path";
 // we can then run the Jest tests that are dependent on the generated files
 // being present.
 
+process.on("unhandledRejection", (reason, p) => {
+  throw reason;
+});
+
 interface TestCase {
   buildOptions: BuildOptions;
   entryPath: string;

@@ -1,0 +1,16 @@
+#import ./user.graphql
+#import ./timestamps.graphql
+
+type Post {
+  id: ID!
+  author: User!
+  timestamps: Timestamps!
+}
+
+type Query {
+  posts: [Post!]!
+}
+
+schema {
+  query: Query
+}

@@ -1,0 +1,7 @@
+#import ./timestamps.graphql
+
+type Post {
+  id: ID!
+  author: User!
+  timestamps: Timestamps!
+}
