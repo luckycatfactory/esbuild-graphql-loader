@@ -43,6 +43,8 @@ type Post {
 }
 ```
 
+Valid import comments are prefixed either with `#import ` or `#import ` and have a suffix of a path relative from the GraphQL file's path.
+
 ### Recommendations
 
 #### Optimize Your DocumentNodes

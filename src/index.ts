@@ -63,6 +63,8 @@ const topologicallySortParsedFiles = (
   return sorted;
 };
 
+type ValidImportCommentPrefix = '#import ' | '# import ';
+
 const parseGraphQLFile = (filePath: string): Promise<ParsedGraphQLFile> =>
   new Promise((resolve) => {
     const readInterface = readline.createInterface({
@@ -73,14 +75,23 @@ const parseGraphQLFile = (filePath: string): Promise<ParsedGraphQLFile> =>
 
     let hasExhaustedImports = false;
 
+    const parseImportAndCapture = (
+      importCommentPrefix: ValidImportCommentPrefix,
+      line: string
+    ): void => {
+      const relativePath = line.replace(importCommentPrefix, '');
+      const absolutePath = path.join(path.dirname(filePath), relativePath);
+      imports.push({
+        absolutePath,
+        relativePath,
+      });
+    };
+
     readInterface.on('line', (line) => {
       if (line.startsWith('#import ')) {
-        const relativePath = line.replace('#import ', '');
-        const absolutePath = path.join(path.dirname(filePath), relativePath);
-        imports.push({
-          absolutePath,
-          relativePath,
-        });
+        parseImportAndCapture('#import ', line);
+      } else if (line.startsWith('# import ')) {
+        parseImportAndCapture('# import ', line);
       } else if (hasExhaustedImports) {
         body += line + '\n';
       } else if (line[0] !== '#' && line !== '') {
