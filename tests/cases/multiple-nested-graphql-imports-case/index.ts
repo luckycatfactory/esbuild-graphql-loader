@@ -1,3 +1,3 @@
-import schema from "./nest/target.graphql";
+import schema from './nest/target.graphql';
 
 export default schema;

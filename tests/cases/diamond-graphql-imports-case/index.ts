@@ -1,3 +1,3 @@
-import schema from "./target.graphql";
+import schema from './target.graphql';
 
 export default schema;
