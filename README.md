@@ -30,6 +30,19 @@ build({
 });
 ```
 
+### GraphQL File Imports
+
+You can import files from within GraphQL files by using imports in comments like so:
+
+```gql
+#import ./user.graphql
+
+type Post {
+  author: User!
+  name: String!
+}
+```
+
 ## Configuration
 
 Some configuration options are available at plugin instantiation.
