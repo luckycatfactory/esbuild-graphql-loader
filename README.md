@@ -30,6 +30,27 @@ build({
 });
 ```
 
+With this in place, you should now be able to import GraphQL like so:
+
+```ts
+import schema from './schema.graphql';
+
+// Do whatever with the schema DocumentNode...
+```
+
+Also, all operations are named exports, so you can do things like this:
+
+```ts
+import {
+  QueryA,
+  QueryB,
+  MutationA,
+  SubscriptionA,
+} from './my-operations.graphql';
+
+// Do whatever with those operations...
+```
+
 ### GraphQL File Imports
 
 You can import files from within GraphQL files by using imports in comments like so:
