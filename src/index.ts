@@ -26,11 +26,12 @@ interface ParsedGraphQLFile {
 // to the value of undefined.
 //
 const generateDocumentNodeString = (
-  graphqlString: string,
+  graphqlDocument: DocumentNode,
   mapDocumentNode?: (documentNode: DocumentNode) => DocumentNode
 ): string => {
-  const ast = gql(graphqlString);
-  const documentNodeToUse = mapDocumentNode ? mapDocumentNode(ast) : ast;
+  const documentNodeToUse = mapDocumentNode
+    ? mapDocumentNode(graphqlDocument)
+    : graphqlDocument;
 
   return JSON.stringify(documentNodeToUse, (key, value) =>
     value === undefined ? '__undefined' : value
@@ -145,6 +146,39 @@ const generateGraphQLString = (entryPointPath: string): Promise<string> => {
   });
 };
 
+const generateContentsFromGraphqlString = (
+  graphqlString: string,
+  mapDocumentNode?: (documentNode: DocumentNode) => DocumentNode
+): string => {
+  const graphqlDocument = gql(graphqlString);
+  const documentNodeAsString = generateDocumentNodeString(
+    graphqlDocument,
+    mapDocumentNode
+  );
+
+  const lines = graphqlDocument.definitions.reduce<string[]>(
+    (accumulator, definition, index) => {
+      if (
+        definition.kind === 'OperationDefinition' &&
+        definition.name &&
+        definition.name.value
+      ) {
+        const name = definition.name.value;
+        accumulator.push(
+          `export const ${name} = documentNode.definitions[${index}];`
+        );
+      }
+
+      return accumulator;
+    },
+    [`const documentNode = ${documentNodeAsString};`]
+  );
+
+  lines.push(`export default documentNode;`);
+
+  return lines.join('\n');
+};
+
 const graphqlLoaderPlugin = (
   options: GraphQLLoaderPluginOptions = {}
 ): Plugin => ({
@@ -152,10 +186,10 @@ const graphqlLoaderPlugin = (
   setup(build) {
     build.onLoad({ filter: options.filterRegex || /\.graphql$/ }, (args) =>
       generateGraphQLString(args.path).then((graphqlString) => ({
-        contents: `export default ${generateDocumentNodeString(
+        contents: generateContentsFromGraphqlString(
           graphqlString,
           options.mapDocumentNode
-        )};`,
+        ),
       }))
     );
   },

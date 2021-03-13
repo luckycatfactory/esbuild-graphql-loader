@@ -1,0 +1,40 @@
+query QueryA {
+  getThings {
+    name
+  }
+}
+
+query QueryB {
+  getOtherThings {
+    name
+  }
+}
+
+query MutationA {
+  mutate {
+    name
+  }
+}
+
+query MutationB {
+  mutate {
+    name
+  }
+}
+
+subscription SubscriptionA($postID: ID!) {
+  commentAdded(postID: $postID) {
+    id
+    content
+  }
+}
+
+subscription SubscriptionB($postID: ID!) {
+  commentDeleted(postID: $postID) {
+    id
+  }
+}
+
+type SomeThingThatIsNotAnOperation {
+  id: ID!
+}
