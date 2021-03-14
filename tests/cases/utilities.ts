@@ -1,6 +1,6 @@
 import fs from 'fs';
 import gql from 'graphql-tag';
-import { DefinitionNode, DocumentNode } from 'graphql';
+import { NameNode, DefinitionNode, DocumentNode } from 'graphql';
 
 interface JSONLocation {
   end: number;
@@ -11,11 +11,35 @@ interface JSONDocumentNode extends Omit<DocumentNode, 'loc'> {
   loc?: JSONLocation;
 }
 
+type NameableDefinitionNode = Extract<DefinitionNode, { name?: NameNode }>;
+
+const isNameableDefinitionNode = (
+  definitionNode: DefinitionNode
+): definitionNode is NameableDefinitionNode => {
+  return definitionNode.kind !== 'SchemaDefinition';
+};
+
+export const findDefinitionNodeByName = (
+  documentNode: JSONDocumentNode,
+  name: string
+): NameableDefinitionNode => {
+  for (let i = 0; i < documentNode.definitions.length; i++) {
+    const definition = documentNode.definitions[i];
+
+    if (isNameableDefinitionNode(definition)) {
+      if (definition.name?.value === name) return definition;
+    }
+  }
+
+  throw new Error(`Attempt made to find non-existent DefinitionNode: ${name}`);
+};
+
 export const generateJSONDocumentNodeFromOperationDefinition = (
-  operationDefinition: DefinitionNode
+  operationDefinition: DefinitionNode,
+  fragments: NameableDefinitionNode[] = []
 ): JSONDocumentNode => ({
   kind: 'Document',
-  definitions: [operationDefinition],
+  definitions: [operationDefinition, ...fragments],
 });
 
 // DocumentNode Location instances have a toJSON on them. That means that by
