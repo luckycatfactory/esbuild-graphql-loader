@@ -1,6 +1,7 @@
 import path from 'path';
 
 import {
+  findDefinitionNodeByName,
   generateJSONDocumentNodeFromOperationDefinition,
   getJSONDocumentNodeFromString,
   importFileAsString,
@@ -13,25 +14,44 @@ describe('multiple operation imports', () => {
     return importFileAsString(targetFile).then((data) => {
       const expected = getJSONDocumentNodeFromString(data);
 
+      const queryADefinition = findDefinitionNodeByName(expected, 'QueryA');
+      const queryBDefinition = findDefinitionNodeByName(expected, 'QueryB');
+      const mutationADefinition = findDefinitionNodeByName(
+        expected,
+        'MutationA'
+      );
+      const mutationBDefinition = findDefinitionNodeByName(
+        expected,
+        'MutationB'
+      );
+      const subscriptionADefinition = findDefinitionNodeByName(
+        expected,
+        'SubscriptionA'
+      );
+      const subscriptionBDefinition = findDefinitionNodeByName(
+        expected,
+        'SubscriptionB'
+      );
+
       expect(AllExports).toEqual({
         default: expected,
         QueryA: generateJSONDocumentNodeFromOperationDefinition(
-          expected.definitions[0]
+          queryADefinition
         ),
         QueryB: generateJSONDocumentNodeFromOperationDefinition(
-          expected.definitions[1]
+          queryBDefinition
         ),
         MutationA: generateJSONDocumentNodeFromOperationDefinition(
-          expected.definitions[2]
+          mutationADefinition
         ),
         MutationB: generateJSONDocumentNodeFromOperationDefinition(
-          expected.definitions[3]
+          mutationBDefinition
         ),
         SubscriptionA: generateJSONDocumentNodeFromOperationDefinition(
-          expected.definitions[4]
+          subscriptionADefinition
         ),
         SubscriptionB: generateJSONDocumentNodeFromOperationDefinition(
-          expected.definitions[5]
+          subscriptionBDefinition
         ),
       });
     });

@@ -1,0 +1,3 @@
+fragment SomeImportedFragment on User {
+  three
+}

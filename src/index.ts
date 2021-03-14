@@ -5,7 +5,7 @@ import {
   OperationDefinitionNode,
   DocumentNode,
   DefinitionNode,
-  FragmentSpreadNode,
+  SelectionNode,
   FragmentDefinitionNode,
 } from 'graphql';
 import readline from 'readline';
@@ -185,19 +185,31 @@ const collectAllFragmentDefinitions = (
 };
 
 const collectAllFragmentReferences = (
-  operationNode: OperationDefinitionNode
+  node: OperationDefinitionNode | FragmentDefinitionNode,
+  allFragments: Record<string, FragmentDefinitionNode>
 ): string[] => {
   const references: string[] = [];
 
-  operationNode.selectionSet.selections.forEach((selection) => {
-    if (selection.kind === 'Field') {
-      selection.selectionSet?.selections.forEach((selection) => {
-        if (selection.kind === 'FragmentSpread') {
-          references.push(selection.name.value);
-        }
-      });
+  const handleSelectionNode = (selection: SelectionNode): void => {
+    if (selection.kind === 'FragmentSpread') {
+      const fragment = allFragments[selection.name.value];
+      const innerFragmentReferences = collectAllFragmentReferences(
+        fragment,
+        allFragments
+      );
+      references.push(...innerFragmentReferences, selection.name.value);
     }
-  });
+  };
+
+  if (node.kind === 'OperationDefinition') {
+    node.selectionSet.selections.forEach((selection) => {
+      if (selection.kind === 'Field') {
+        selection.selectionSet?.selections.forEach(handleSelectionNode);
+      }
+    });
+  } else {
+    node.selectionSet.selections.forEach(handleSelectionNode);
+  }
 
   return references;
 };
@@ -223,7 +235,10 @@ const generateContentsFromGraphqlString = (
       ) {
         const name = definition.name.value;
 
-        const fragmentsForOperation = collectAllFragmentReferences(definition);
+        const fragmentsForOperation = collectAllFragmentReferences(
+          definition,
+          allFragments
+        );
 
         const fragments = fragmentsForOperation.map((fragmentForOperation) => {
           const fragment = allFragments[fragmentForOperation];
