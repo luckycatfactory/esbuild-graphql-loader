@@ -87,7 +87,11 @@ const parseGraphQLFile = (filePath: string): Promise<ParsedGraphQLFile> =>
       line: string
     ): void => {
       const relativePath = line.replace(importCommentPrefix, '');
-      const absolutePath = path.join(path.dirname(filePath), relativePath);
+      const relativePathWithoutQuotations = relativePath.replace(/"|'/g, '');
+      const absolutePath = path.join(
+        path.dirname(filePath),
+        relativePathWithoutQuotations
+      );
       imports.push({
         absolutePath,
         relativePath,
