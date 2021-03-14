@@ -1,7 +1,7 @@
 import { Plugin } from 'esbuild';
 import fs from 'fs';
 import gql from 'graphql-tag';
-import { DocumentNode } from 'graphql';
+import { OperationDefinitionNode, DocumentNode } from 'graphql';
 import readline from 'readline';
 import path from 'path';
 
@@ -146,6 +146,11 @@ const generateGraphQLString = (entryPointPath: string): Promise<string> => {
   });
 };
 
+const generateDocumentNodeStringForOperationDefinition = (
+  rootDocumentIndex: number
+): string =>
+  `{kind:"Document",definitions:[documentNode.definitions[${rootDocumentIndex}]]}`;
+
 const generateContentsFromGraphqlString = (
   graphqlString: string,
   mapDocumentNode?: (documentNode: DocumentNode) => DocumentNode
@@ -164,9 +169,10 @@ const generateContentsFromGraphqlString = (
         definition.name.value
       ) {
         const name = definition.name.value;
-        accumulator.push(
-          `export const ${name} = documentNode.definitions[${index}];`
+        const operationDocumentString = generateDocumentNodeStringForOperationDefinition(
+          index
         );
+        accumulator.push(`export const ${name} = ${operationDocumentString};`);
       }
 
       return accumulator;

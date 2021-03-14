@@ -1,6 +1,6 @@
 import fs from 'fs';
 import gql from 'graphql-tag';
-import { DocumentNode } from 'graphql';
+import { DefinitionNode, DocumentNode } from 'graphql';
 
 interface JSONLocation {
   end: number;
@@ -10,6 +10,13 @@ interface JSONLocation {
 interface JSONDocumentNode extends Omit<DocumentNode, 'loc'> {
   loc?: JSONLocation;
 }
+
+export const generateJSONDocumentNodeFromOperationDefinition = (
+  operationDefinition: DefinitionNode
+): JSONDocumentNode => ({
+  kind: 'Document',
+  definitions: [operationDefinition],
+});
 
 // DocumentNode Location instances have a toJSON on them. That means that by
 // default, when JSON.stringify is called, is will call that method. That ends
