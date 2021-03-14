@@ -1,0 +1,36 @@
+fragment NameParts on User {
+  firstName
+  lastName
+}
+
+fragment JobParts on User {
+  industry
+  yearsOfExperience
+}
+
+query Query {
+  getUsers {
+    ...NameParts
+    industry
+  }
+}
+
+mutation Mutation {
+  updateUser {
+    ...NameParts
+    ...JobParts
+  }
+}
+
+subscription Subscription {
+  userAdded {
+    firstName
+    ...JobParts
+  }
+}
+
+subscription SubscriptionWithoutFragment {
+  userAdded {
+    id
+  }
+}

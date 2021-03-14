@@ -1,7 +1,13 @@
 import { Plugin } from 'esbuild';
 import fs from 'fs';
 import gql from 'graphql-tag';
-import { OperationDefinitionNode, DocumentNode } from 'graphql';
+import {
+  OperationDefinitionNode,
+  DocumentNode,
+  DefinitionNode,
+  FragmentSpreadNode,
+  FragmentDefinitionNode,
+} from 'graphql';
 import readline from 'readline';
 import path from 'path';
 
@@ -148,14 +154,52 @@ const generateGraphQLString = (entryPointPath: string): Promise<string> => {
 
 const generateDocumentNodeStringForOperationDefinition = (
   operationDefinition: OperationDefinitionNode,
+  fragments: FragmentDefinitionNode[],
   mapDocumentNode?: (documentNode: DocumentNode) => DocumentNode
 ): string => {
   const operationDocument: DocumentNode = {
     kind: 'Document',
-    definitions: [operationDefinition],
+    definitions: [operationDefinition, ...fragments],
   };
 
   return generateDocumentNodeString(operationDocument, mapDocumentNode);
+};
+
+const collectAllFragmentDefinitions = (
+  documentNode: DocumentNode
+): Record<string, FragmentDefinitionNode> => {
+  const accumulateAllFragments = (
+    nodes: readonly DefinitionNode[],
+    accumulator: Record<string, FragmentDefinitionNode>
+  ): Record<string, FragmentDefinitionNode> => {
+    nodes.forEach((node) => {
+      if (node.kind === 'FragmentDefinition') {
+        accumulator[node.name.value] = node;
+      }
+    });
+
+    return accumulator;
+  };
+
+  return accumulateAllFragments(documentNode.definitions, {});
+};
+
+const collectAllFragmentReferences = (
+  operationNode: OperationDefinitionNode
+): string[] => {
+  const references: string[] = [];
+
+  operationNode.selectionSet.selections.forEach((selection) => {
+    if (selection.kind === 'Field') {
+      selection.selectionSet?.selections.forEach((selection) => {
+        if (selection.kind === 'FragmentSpread') {
+          references.push(selection.name.value);
+        }
+      });
+    }
+  });
+
+  return references;
 };
 
 const generateContentsFromGraphqlString = (
@@ -168,6 +212,8 @@ const generateContentsFromGraphqlString = (
     mapDocumentNode
   );
 
+  const allFragments = collectAllFragmentDefinitions(graphqlDocument);
+
   const lines = graphqlDocument.definitions.reduce<string[]>(
     (accumulator, definition) => {
       if (
@@ -176,8 +222,24 @@ const generateContentsFromGraphqlString = (
         definition.name.value
       ) {
         const name = definition.name.value;
+
+        const fragmentsForOperation = collectAllFragmentReferences(definition);
+
+        const fragments = fragmentsForOperation.map((fragmentForOperation) => {
+          const fragment = allFragments[fragmentForOperation];
+
+          if (!fragment) {
+            throw new Error(
+              `Expected to find fragment definition for ${fragmentForOperation}`
+            );
+          }
+
+          return fragment;
+        });
+
         const operationDocumentString = generateDocumentNodeStringForOperationDefinition(
           definition,
+          fragments,
           mapDocumentNode
         );
         accumulator.push(`export const ${name} = ${operationDocumentString};`);
