@@ -1,6 +1,7 @@
 import path from 'path';
 
 import {
+  generateJSONDocumentNodeFromOperationDefinition,
   getJSONDocumentNodeFromString,
   importFileAsString,
 } from '../utilities';
@@ -14,12 +15,24 @@ describe('multiple operation imports', () => {
 
       expect(AllExports).toEqual({
         default: expected,
-        QueryA: expected.definitions[0],
-        QueryB: expected.definitions[1],
-        MutationA: expected.definitions[2],
-        MutationB: expected.definitions[3],
-        SubscriptionA: expected.definitions[4],
-        SubscriptionB: expected.definitions[5],
+        QueryA: generateJSONDocumentNodeFromOperationDefinition(
+          expected.definitions[0]
+        ),
+        QueryB: generateJSONDocumentNodeFromOperationDefinition(
+          expected.definitions[1]
+        ),
+        MutationA: generateJSONDocumentNodeFromOperationDefinition(
+          expected.definitions[2]
+        ),
+        MutationB: generateJSONDocumentNodeFromOperationDefinition(
+          expected.definitions[3]
+        ),
+        SubscriptionA: generateJSONDocumentNodeFromOperationDefinition(
+          expected.definitions[4]
+        ),
+        SubscriptionB: generateJSONDocumentNodeFromOperationDefinition(
+          expected.definitions[5]
+        ),
       });
     });
   });
