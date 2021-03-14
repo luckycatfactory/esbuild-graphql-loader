@@ -1,0 +1,23 @@
+#import ./imported-fragment.graphql
+
+fragment SomeFragmentBeforeTheQuery on User {
+  ...SomeImportedFragment
+  two
+}
+
+query Query {
+  getUsers {
+    ...SomeFragmentAfterTheQuery
+  }
+}
+
+fragment SomeFragmentAfterTheQuery on User {
+  ...SomeFragmentBeforeTheQuery
+  one
+}
+
+query AnotherQuery {
+  getUsers {
+    ...SomeImportedFragment
+  }
+}
