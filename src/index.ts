@@ -147,9 +147,16 @@ const generateGraphQLString = (entryPointPath: string): Promise<string> => {
 };
 
 const generateDocumentNodeStringForOperationDefinition = (
-  rootDocumentIndex: number
-): string =>
-  `{kind:"Document",definitions:[documentNode.definitions[${rootDocumentIndex}]]}`;
+  operationDefinition: OperationDefinitionNode,
+  mapDocumentNode?: (documentNode: DocumentNode) => DocumentNode
+): string => {
+  const operationDocument: DocumentNode = {
+    kind: 'Document',
+    definitions: [operationDefinition],
+  };
+
+  return generateDocumentNodeString(operationDocument, mapDocumentNode);
+};
 
 const generateContentsFromGraphqlString = (
   graphqlString: string,
@@ -162,7 +169,7 @@ const generateContentsFromGraphqlString = (
   );
 
   const lines = graphqlDocument.definitions.reduce<string[]>(
-    (accumulator, definition, index) => {
+    (accumulator, definition) => {
       if (
         definition.kind === 'OperationDefinition' &&
         definition.name &&
@@ -170,7 +177,8 @@ const generateContentsFromGraphqlString = (
       ) {
         const name = definition.name.value;
         const operationDocumentString = generateDocumentNodeStringForOperationDefinition(
-          index
+          definition,
+          mapDocumentNode
         );
         accumulator.push(`export const ${name} = ${operationDocumentString};`);
       }
