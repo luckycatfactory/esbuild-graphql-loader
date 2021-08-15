@@ -36,7 +36,7 @@
   "module": "./lib/index.mjs",
   "name": "@luckycatfactory/esbuild-graphql-loader",
   "peerDependencies": {
-    "esbuild": "^0.8.26",
+    "esbuild": ">=0.8.26",
     "graphql-tag": "^2.11.0"
   },
   "publishConfig": {
