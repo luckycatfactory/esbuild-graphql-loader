@@ -4,6 +4,14 @@
 
 This is a zero-dependency [esbuild](https://github.com/evanw/esbuild) plugin that allows for the importing of GraphQL files.
 
+## Requirements
+
+This packages requires at least the following for `esbuild`:
+
+```
+>=0.8.26
+```
+
 ## Usage
 
 To install this package:
