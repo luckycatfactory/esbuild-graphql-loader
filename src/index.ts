@@ -116,7 +116,9 @@ const parseGraphQLFile = (filePath: string): Promise<ParsedGraphQLFile> =>
     });
   });
 
-const generateGraphQLString = (entryPointPath: string): Promise<string> => {
+export const generateGraphQLString = (
+  entryPointPath: string
+): Promise<string> => {
   const cache: Record<string, ParsedGraphQLFile> = {};
   const parsePromises: Promise<null>[] = [];
   const seenImportPaths = new Set();
@@ -218,7 +220,7 @@ const collectAllFragmentReferences = (
   return references;
 };
 
-const generateContentsFromGraphqlString = (
+export const generateContentsFromGraphqlString = (
   graphqlString: string,
   mapDocumentNode?: (documentNode: DocumentNode) => DocumentNode
 ): string => {
