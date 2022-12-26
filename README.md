@@ -4,24 +4,16 @@
 
 This is a zero-dependency [esbuild](https://github.com/evanw/esbuild) plugin that allows for the importing of GraphQL files.
 
-## Requirements
-
-This packages requires at least the following for `esbuild`:
-
-```
->=0.8.26
-```
-
 ## Usage
 
 To install this package:
 
 ```sh
-npm install --save @luckycatfactory/esbuild-graphql-loader esbuild graphql-tag
+npm install --save @luckycatfactory/esbuild-graphql-loader esbuild graphql-tag graphql
 ```
 
 ```sh
-yarn add @luckycatfactory/esbuild-graphql-loader esbuild graphql-tag
+yarn add @luckycatfactory/esbuild-graphql-loader esbuild graphql-tag graphql
 ```
 
 Then, use the plugin like so:
