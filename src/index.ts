@@ -281,13 +281,15 @@ const graphqlLoaderPlugin = (
 ): Plugin => ({
   name: 'graphql-loader',
   setup(build) {
-    build.onLoad({ filter: options.filterRegex || /\.graphql$/ }, (args) =>
-      generateGraphQLString(args.path).then((graphqlString) => ({
-        contents: generateContentsFromGraphqlString(
-          graphqlString,
-          options.mapDocumentNode
-        ),
-      }))
+    build.onLoad(
+      { filter: options.filterRegex || /\.graphql$|\.gql$/ },
+      (args) =>
+        generateGraphQLString(args.path).then((graphqlString) => ({
+          contents: generateContentsFromGraphqlString(
+            graphqlString,
+            options.mapDocumentNode
+          ),
+        }))
     );
   },
 });
