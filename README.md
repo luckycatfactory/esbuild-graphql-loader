@@ -24,7 +24,7 @@ import graphqlLoaderPlugin from '@luckycatfactory/esbuild-graphql-loader';
 
 build({
   ...otherOptions,
-  plugins: [graphqlLoaderPlugin()],
+  plugins: [graphqlLoaderPlugin.default()],
 }).catch(() => {
   process.exit(1);
 });
